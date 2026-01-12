@@ -1,0 +1,7 @@
+Customer is highly correlated with Sales
+Most of the stores are closed no sunday
+Promotion increased the number of sales by great margin
+Last Months has increasing number of sales
+Not even a single one graph is normal in train
+Store A and B are the main Features of dataset
+Promotion always increases the number of sales
