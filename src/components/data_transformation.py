@@ -2,7 +2,7 @@ import os
 import joblib
 from src.logger import logging
 from src.exception import CustomException
-from src.components.featureEnginnering import FeatureEngineering
+from .featureEnginnering import FeatureEngineering
 
 class DataTransformation:
     def __init__(self):
@@ -18,28 +18,23 @@ class DataTransformation:
             fe = FeatureEngineering(train_df, test_df, store_df)
             
             
-            train_processed, test_processed = fe.perform_feature_engineering()
+            X_train,y_train, X_test, = fe.perform_feature_engineering()
 
            
-            X_train = train_processed.drop(columns=[target_col])
-            y_train = train_processed[target_col]
-
-            X_test = test_processed.drop(columns=[target_col])
-            y_test = test_processed[target_col]
-
+            
             logging.info('Trying to convert the dataframe into the csv files')
 
             # Save the processed datasets into CSV files
-            train_processed.to_csv(os.path.join(self.artifact_dir, 'train_processed.csv'), index=False)
-            test_processed.to_csv(os.path.join(self.artifact_dir, 'test_processed.csv'), index=False)
+            X_train.to_csv(os.path.join(self.artifact_dir, 'train_processed.csv'), index=False)
+            y_train.to_csv(os.path.join(self.artifact_dir, 'train_target.csv'), index=False)
+            X_test.to_csv(os.path.join(self.artifact_dir, 'test_processed.csv'), index=False)
 
             logging.info('Conversion of the files successful')
 
             # Return the transformed data
-            return X_train, X_test, y_train, y_test
+            return X_train, X_test, y_train,
         
         except Exception as e: 
            
             logging.error(f'Failed Data Transformation: {str(e)}')
             raise CustomException(f"Error during data transformation: {str(e)}")
-

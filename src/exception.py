@@ -1,28 +1,41 @@
 import sys
-from src.logger import logging
+from .logger import logging
 
-def error_message_detail(error,detail:sys) :
-    _,_,exc_tb = detail.exc_info()
+
+def error_message_detail(error, error_detail):
+    """
+    Returns a detailed error message with file name and line number.
+    """
+    _, _, exc_tb = error_detail.exc_info()
+
+    
+    if exc_tb is None:
+        return str(error)
+
     file_name = exc_tb.tb_frame.f_code.co_filename
     line_number = exc_tb.tb_lineno
-    error_message = f"Error occurred in script: {file_name} at line number: {line_number} with message: {str(error)}"
+
+    error_message = (
+        f"Error occurred in script: {file_name} "
+        f"at line number: {line_number} "
+        f"with message: {str(error)}"
+    )
+
+    logging.error(error_message)
     return error_message
 
-class CustomException(Exception):
-    """A custom exception class that extends the built-in Exception class."""
 
-    def __init__(self, message):
-        super().__init__(message)
-        self.message = error_message_detail(message, sys)
+class CustomException(Exception):
+    def __init__(self, error, error_detail=sys):
+        """
+        Custom exception that logs detailed error information.
+        """
+        super().__init__(error)
+        self.error_message = error_message_detail(error, error_detail)
 
     def __str__(self):
-        return f"CustomException: {self.message}"
-def raise_custom_exception(message):
-    """Function to raise a CustomException with the given message."""
-    raise CustomException(message)
-if __name__ == "__main__":
-    try:
-        raise_custom_exception("This is a custom error message.")
-    except CustomException as e:
-        print(e)
-        sys.exit(1)
+        return self.error_message
+
+
+
+
